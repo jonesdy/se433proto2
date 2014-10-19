@@ -1,13 +1,18 @@
 CC=gcc
 CFLAGS=-Wall -c -fpic
 LIBFLAGS=-shared -o
-LIBRARY=face_lib.so
+LIBRARY=face_io_lib
+EXECUTABLE=face_pss.out
+all:lib exe
 
-all:face_io_api.o
-	$(CC) $(LIBFLAGS) $(LIBRARY) $^
+exe:face_pss.o
+	LD_PATH=. $(CC) -o $(EXECUTABLE) $^ -Wl,-rpath,. lib$(LIBRARY).so
+
+lib:face_io_api.o config_parser.o
+	$(CC) $(LIBFLAGS) lib$(LIBRARY).so $^
 
 %.o:%.c
 	$(CC) $(CFLAGS) $<
 
 clean:
-	rm -rf *o $(LIBRARY)
+	rm -rf *o $(LIBRARY) $(EXECUTABLE)
