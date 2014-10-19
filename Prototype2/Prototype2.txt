@@ -1,0 +1,111 @@
+Prototype 2:
+
+I did an I/O Lib that handles direct API calls.
+I also made a config file and a part of a simple config file parser.
+Do NOT make any changes to the files I have
+(Except uncommenting one of the #define's in Globals.h).  
+If you find errors or issues, let me know and I will fix and
+put them out, so all are working from the same set of files.
+
+The choices are:
+
+G6 1. I/O seg Linux
+G2 2. I/O Seg Windows
+G4 3. PSS Linux
+G1 4. PSS Windows
+G3 5. VS 2012 C#-based XML-driven GUI demonstration
+G5 6. VS 2012 C#-based XML-driven GUI demonstration
+
+For first 4:
+- These must be done in C and must be console based.
+- The prototype is not directly tied to WOW and Emergency.
+     Keep it general, use arrays.
+- The Windows side can use not Posix functions but
+    - Must make every effort to minimize use
+    - Must use a Posix-type function is VS has it
+    - Wherever a non-Posix function is used, it must be 
+        clearly marked with:    *****  Non-Posix ******
+- Assume I/O seg, PSS in same program - so only direct calls
+- Only handle discretes
+- Must read and use config file:
+     - Although it is a prototype, no hard-coding items
+     - The demo's must work if I add multiple 
+          TX, RX Discretes to the config file
+     - Use arrays to handle the discretes
+     - See parallel arrays I used in face_io_api.c  
+- For Discrete channels, logical channel #'s from 
+     - 1-16 are hardware RX (Input) channels 1-16
+     - 17-32 are hardware TX (Output) channels 1-16
+- For I/O Seg, I will take a picture of the hardware
+     - I'll put the picture in the share
+     - It will show where the pins are.
+     - Don't want anybody frying the board!
+     - Right now, the attached hardware is set up to use
+          Discrete Input Channel 1
+          Discrete Output channel 1
+- See the test bed main in face_io_api.c for examples
+     of how to test your sides prior to when we put 
+     these together.
+- The I/O set side must appropriately drive hardware,
+     no matter how many discretes are configured.  For
+     example, if we have an XML file with 3 outputs, 
+     then if we say to turn 2 off and 1 on, if we move
+     the wire for the LED, we will see it appropriately
+     light or not.   We could add some more LEDs
+- The PSS seg must have a way for the user to 
+     - prompt for and read an output channel number 
+         and a value to set it to
+     - Output the values of the input channels on user request
+ 
+For 5, 6:
+- Show sample XML constructs to me ahead of time
+     - I want to be a second check on what you are considering
+     - Keep it general as feasible for now. 
+         Next semester, we would want to read multiple files
+         and create multiple tab pages, one for each file
+Some things to think about - we need to add to this list as we go
+  - For Transmit
+      - Allow fields for label, data, etc.
+      - Need to specify channel an whether RX or TX
+      - Field and button for reading and sending a file
+      - Field for period and button to start/stop sending at that period
+      - Allow data to be specified and put it together to make a Qord to send
+  - For receive
+      - Raw display, selecting RX channel numbers and display in table
+      - Formatted data display
+         - Channel # to display
+         - ARINC label to display
+         - Mapping of data bits to formatted fields to display
+         - Conversions to apply when displaying
+
+The more I think about this, I think it will be a combination of 
+a fixed page or pages (tabs) and a configurable set of tabs.
+For example, the Raw RX display of multiple channels is probably a fixed page.
+The setting up of a generic send, with period, channel, and raw data fields
+for Channel, label, SDI, SSM, data, etc., period, one-time send, etc. is
+probably a fixed page.
+
+This is the start of ideas for the Arinc Sim.  
+You obviously can't do all these things.
+I expect you would for this prototype you would do:
+
+1. Prototype (mock up in Visual Studio) some fixed pages 
+     (at least two, one for Generic Send, one for Generic receive)
+   You could get some ideas from existing products.
+   Any buttons can just pop up a message box saying what will 
+   happen when it is pushed.
+2. Make a small XML file that you program can read in and display that:
+      1. One label that goes on the textbox, text specified in XML file
+      2. One textbox
+      3. One button, text specified in XML file
+   When clicked, the button puts up a MessageBox that displays
+     the value in the textbox
+3. The controls in #2 must be created dynamically.
+   You can't make any part of them at design time.
+4. Be able to tell the class on how what you have generalizes to N of each
+5. Show your intended XML to me ahead of time.
+
+Note:
+  Visual Studio has an XmlTextReader (you don't need to read it on you own).
+
+ 
