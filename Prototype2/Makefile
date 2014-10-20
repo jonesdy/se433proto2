@@ -15,4 +15,7 @@ lib:face_io_api.o config_parser.o
 	$(CC) $(CFLAGS) $<
 
 clean:
-	rm -rf *o $(LIBRARY) $(EXECUTABLE)
+	rm -rf *o $(LIBRARY) $(EXECUTABLE) testrepl
+
+repltest: repl.c
+	$(CC) -DCOLOR -DTESTREPL repl.c -o repltest
