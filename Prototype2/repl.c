@@ -18,7 +18,11 @@ void repl()
 		char command;
 		int channel = -1;
 		printf(">");
-		scanf("%c", &command);
+		if(scanf("%c", &command) == EOF)
+		{
+			printf("\n");
+			return;
+		}
 		if(command == 'h')
 		{
 			printf("s 5 -- set discrete 5\n");
@@ -37,11 +41,10 @@ void repl()
 		{
 			while(command != '\n')
 				scanf("%c", &command);
-			//ungetc(command, stdin);//this is pretty bad
 			continue;
 		}
 		scanf("%d", &channel);
-		//test if channel is available here
+		//test if channel is available here?
 		if(command == 's')
 		{
 			int result = 1;
