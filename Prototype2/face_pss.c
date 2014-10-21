@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <arpa/inet.h>
 
 int main(int argc, char *argv[])
 {
@@ -15,24 +16,78 @@ int main(int argc, char *argv[])
       return 1;
    }
 
+   // Call init
+
+   // Open channels from config
+
+   // Get user input and set or read
+
+   // Close channels
+
    return 0;
 }
 
 #define MAX_BUFF_SIZE 1024
 
-void setDiscrete(int channel, _Bool value)
+void setDiscrete(FACE_INTERFACE_HANDLE_TYPE handle, int channel, _Bool value,
+   FACE_RETURN_CODE_TYPE* retCode)
 {
-   FACE_RETURN_CODE_TYPE retCode;
-   FACE_MESSAGE_LENGTH_TYPE msgLen;
-   char txBuff[MAX_BUFF_SIZE];      // MAX_BUFF_SIZE
-   char rxBuff[MAX_BUFF_SIZE];
+   // The messages and stuff we will need
+   char txBuff[MAX_BUFF_SIZE];
+   //char rxBuff[MAX_BUFF_SIZE];
    FACE_IO_MESSAGE_TYPE *txFaceMsg = (FACE_IO_MESSAGE_TYPE*)txBuff;
-   FACE_IO_MESSAGE_TYPE *rxFaceMsg = (FACE_IO_MESSAGE_TYPE*)rxBuff;
+   //FACE_IO_MESSAGE_TYPE *rxFaceMsg = (FACE_IO_MESSAGE_TYPE*)rxBuff;
 
+   // Zero them out
    memset(txBuff, 0, MAX_BUFF_SIZE);
-   memset(rxBuff, 0, MAX_BUFF_SIZE);
+   //memset(rxBuff, 0, MAX_BUFF_SIZE);
+
+   // Set the fixed fields
+   // TODO: What should we set these GUIDs to??
+   txFaceMsg->guid = htonl(100);
+   //rxFaceMsg->guid = htonl(200);
+   // TODO: This might need to be more generic? or add ARINC functions?
+   txFaceMsg->busType = FACE_DISCRETE;
+   //rxFaceMsg->busType = FACE_DISCRETE;
+   // TODO: What is this FACE_DATA?
+   txFaceMsg->message_type = htons(FACE_DATA);
+   //rxFaceMsg->message_type = htons(FACE_DATA);
+   // TODO: Why 4?
+   FaceSetPayLoadLength(txFaceMsg, 4);
+   //FaceSetPayLoadLength(rxFaceMsg, 4);
+
+   FaceSetDiscreteChannelNumber(txFaceMsg, channel);
+
+   if(value == true)
+   {
+      FaceSetDiscreteState(txFaceMsg, 1);
+   }
+   else
+   {
+      FaceSetDiscreteState(txFaceMsg, 0);
+   }
+
+   FACE_IO_Write(handle, 0, FACE_MSG_HEADER_SIZE + 4, txFaceMsg, retCode);
 }
 
-_Bool readDiscrete(int channel)
+_Bool readDiscrete(FACE_INTERFACE_HANDLE_TYPE handle, int channel,
+   FACE_RETURN_CODE_TYPE* retCode)
 {
+   char rxBuff[MAX_BUFF_SIZE];
+   FACE_MESSAGE_LENGTH_TYPE msgLen;
+   FACE_IO_MESSAGE_TYPE *rxFaceMsg = (FACE_IO_MESSAGE_TYPE*)rxBuff;
+
+   memset(rxBuff, 0, MAX_BUFF_SIZE);
+
+   rxFaceMsg->guid = htonl(200);
+
+   rxFaceMsg->busType = FACE_DISCRETE;
+
+   rxFaceMsg->message_type = htons(FACE_DATA);
+
+   FaceSetPayLoadLength(rxFaceMsg, 4);
+
+   FACE_IO_Read(handle, 0, &msgLen, rxFaceMsg, retCode);
+
+   return (_Bool)FaceDiscreteState(rxFaceMsg);
 }
