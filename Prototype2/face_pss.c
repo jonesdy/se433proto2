@@ -18,6 +18,13 @@ int main(int argc, char *argv[])
 
    // Call init
 
+   // Parse the config file
+   FACE_CONFIG_DATA_TYPE config[32];
+   uint32_t numConnections[1];
+   numConnections[0] = 32;
+   PasrseConfigFile( argv[1], config, numConnections);
+   printf("First name: %s\n", config[0].name);
+
    // Open channels from config
 
    // Get user input and set or read
