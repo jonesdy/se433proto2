@@ -34,27 +34,20 @@ void setDiscrete(FACE_INTERFACE_HANDLE_TYPE handle, int channel, _Bool value,
 {
    // The messages and stuff we will need
    char txBuff[MAX_BUFF_SIZE];
-   //char rxBuff[MAX_BUFF_SIZE];
    FACE_IO_MESSAGE_TYPE *txFaceMsg = (FACE_IO_MESSAGE_TYPE*)txBuff;
-   //FACE_IO_MESSAGE_TYPE *rxFaceMsg = (FACE_IO_MESSAGE_TYPE*)rxBuff;
 
-   // Zero them out
+   // Zero it out
    memset(txBuff, 0, MAX_BUFF_SIZE);
-   //memset(rxBuff, 0, MAX_BUFF_SIZE);
 
    // Set the fixed fields
    // TODO: What should we set these GUIDs to??
    txFaceMsg->guid = htonl(100);
-   //rxFaceMsg->guid = htonl(200);
    // TODO: This might need to be more generic? or add ARINC functions?
    txFaceMsg->busType = FACE_DISCRETE;
-   //rxFaceMsg->busType = FACE_DISCRETE;
    // TODO: What is this FACE_DATA?
    txFaceMsg->message_type = htons(FACE_DATA);
-   //rxFaceMsg->message_type = htons(FACE_DATA);
    // TODO: Why 4?
    FaceSetPayLoadLength(txFaceMsg, 4);
-   //FaceSetPayLoadLength(rxFaceMsg, 4);
 
    FaceSetDiscreteChannelNumber(txFaceMsg, channel);
 
@@ -89,5 +82,6 @@ _Bool readDiscrete(FACE_INTERFACE_HANDLE_TYPE handle, int channel,
 
    FACE_IO_Read(handle, 0, &msgLen, rxFaceMsg, retCode);
 
+   // TODO: Make sure this works
    return (_Bool)FaceDiscreteState(rxFaceMsg);
 }
