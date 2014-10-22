@@ -8,6 +8,11 @@
 #include <string.h>
 #include <arpa/inet.h>
 
+void setDiscreteConvenient(int channel, _Bool value, FACE_CONFIG_DATA_TYPE *config, FACE_INTERFACE_HANDLE_TYPE *handle_arr,
+			   FACE_RETURN_CODE_TYPE* retCode);
+_Bool readDiscreteConvenient(int channel, FACE_CONFIG_DATA_TYPE *config, FACE_INTERFACE_HANDLE_TYPE *handle_arr,
+			     FACE_RETURN_CODE_TYPE* retCode);
+
 int main(int argc, char *argv[])
 {
    if(argc < 2)
@@ -16,17 +21,54 @@ int main(int argc, char *argv[])
       return 1;
    }
 
+   FACE_RETURN_CODE_TYPE retCode;
+
    // Call init
 
    // Parse the config file
-   FACE_CONFIG_DATA_TYPE config[32];
    uint32_t numConnections[1];
-   numConnections[0] = 32;
+   *numConnections = (argc > 2) ? (uint32_t)*argv[2]-'0' : 32;
+   FACE_CONFIG_DATA_TYPE config[*numConnections];
+
    PasrseConfigFile( argv[1], config, numConnections);
-   printf("First name: %s\n", config[0].name);
+   FACE_INTERFACE_HANDLE_TYPE handle_arr[*numConnections];
+
+   // print out what got read from the config
+   int i = 0;
+   printf("Found the following devices:\n");
+   for(i = 0; i < *numConnections; i++) {
+     printf("Ch%d: %s\n", config[i].channel, config[i].name);
+   }
+   
+   printf("The following devices are discretes:\n");
+   for(i = 0; i < *numConnections; i++) {
+     if(config[i].busType == FACE_DISCRETE) {
+       printf("Ch%d: %s\n", config[i].channel, config[i].name);
+     }
+   }
+   printf("\n");
 
    // Open channels from config
 
+   for(i = 0; i < *numConnections; i++) {
+     FACE_IO_Open(config[i].name, &handle_arr[i], &retCode);
+   }
+
+   // testing setting a discrete
+   //   void setDiscrete(FACE_INTERFACE_HANDLE_TYPE handle, int channel, _Bool value, FACE_RETURN_CODE_TYPE* retCode)
+   printf("Ch1: %d\n", readDiscreteConvenient(1, config, handle_arr, &retCode));
+   if(retCode == FACE_TIMED_OUT) {
+     printf("ERROR: ch1 read timed out\n");
+   }
+   printf("Setting ch1\n");
+   setDiscreteConvenient(1, 1, config, handle_arr, &retCode);
+   if(retCode == FACE_TIMED_OUT) {
+     printf("ERROR: ch1 set timed out\n");
+   }
+   printf("Ch1: %d\n", readDiscreteConvenient(1, config, handle_arr, &retCode));
+   if(retCode == FACE_TIMED_OUT) {
+     printf("ERROR: ch1 read timed out\n");
+   }
    // Get user input and set or read
 
    // Close channels
@@ -35,6 +77,8 @@ int main(int argc, char *argv[])
 }
 
 #define MAX_BUFF_SIZE 1024
+
+
 
 void setDiscrete(FACE_INTERFACE_HANDLE_TYPE handle, int channel, _Bool value,
    FACE_RETURN_CODE_TYPE* retCode)
@@ -91,4 +135,16 @@ _Bool readDiscrete(FACE_INTERFACE_HANDLE_TYPE handle, int channel,
 
    // TODO: Make sure this works
    return (_Bool)FaceDiscreteState(rxFaceMsg);
+}
+
+void setDiscreteConvenient(int channel, _Bool value, FACE_CONFIG_DATA_TYPE *config, FACE_INTERFACE_HANDLE_TYPE *handle_arr,
+   FACE_RETURN_CODE_TYPE* retCode)
+{
+  setDiscrete(handle_arr[channel], channel, value, retCode);
+}
+
+_Bool readDiscreteConvenient(int channel, FACE_CONFIG_DATA_TYPE *config, FACE_INTERFACE_HANDLE_TYPE *handle_arr,
+   FACE_RETURN_CODE_TYPE* retCode)
+{
+  return readDiscrete(handle_arr[channel], channel, retCode);
 }
