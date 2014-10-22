@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
    PasrseConfigFile( argv[1], config, numConnections);
    FACE_INTERFACE_HANDLE_TYPE handle_arr[*numConnections];
 
-   // print out what got read from the config
+   /* // print out what got read from the config
    int i = 0;
    printf("Found the following devices:\n");
    for(i = 0; i < *numConnections; i++) {
@@ -57,10 +57,11 @@ int main(int argc, char *argv[])
        printf("Ch%d: %s\n", config[i].channel, config[i].name);
      }
    }
-   printf("\n");
+   printf("\n");*/
 
    // Open channels from config and store handles
    FACE_INTERFACE_HANDLE_TYPE handles[32];
+   int i = 0;
    for(i = 0; i < 32; i++)
    {
       if(config[i].channel != 0)
@@ -84,7 +85,7 @@ int main(int argc, char *argv[])
 
    // testing setting a discrete
    //   void setDiscrete(FACE_INTERFACE_HANDLE_TYPE handle, int channel, _Bool value, FACE_RETURN_CODE_TYPE* retCode)
-   printf("Ch1: %d\n", readDiscreteConvenient(1, config, handle_arr, &retCode));
+   /* printf("Ch1: %d\n", readDiscreteConvenient(1, config, handle_arr, &retCode));
    if(retCode == FACE_TIMED_OUT) {
      printf("ERROR: ch1 read timed out\n");
    }
@@ -96,13 +97,13 @@ int main(int argc, char *argv[])
    printf("Ch1: %d\n", readDiscreteConvenient(1, config, handle_arr, &retCode));
    if(retCode == FACE_TIMED_OUT) {
      printf("ERROR: ch1 read timed out\n");
-   }
+   }*/
    // Get user input and set or read
-   int channel = 9000;  // TODO: Replace this with real input
-   uint8_t discreteValue = 0;
+   //int channel = 9000;  // TODO: Replace this with real input
+   //uint8_t discreteValue = 0;
 
    // Check that the user input is valid
-   if(channel >= 1 && channel <= 16)
+   /*if(channel >= 1 && channel <= 16)
    {
       // RX, must want to read
    }
@@ -113,11 +114,11 @@ int main(int argc, char *argv[])
    else
    {
       printf("Channel %d is not a valid channel\n", channel);
-   }
+   }*/
 
    // Do actual read or write (see below functions)
    // Find the handle for this channel
-   FACE_INTERFACE_HANDLE_TYPE handle = NULL;
+   /*FACE_INTERFACE_HANDLE_TYPE handle = NULL;
    for(i = 0; i < 32; i++)
    {
       if(config[i].channel == channel)
@@ -155,7 +156,7 @@ int main(int argc, char *argv[])
       {
          printf("Channel %d: %u", channel, discreteValue);
       }
-   }
+   }*/
    repl(handles, config);
 
    // Close channels
