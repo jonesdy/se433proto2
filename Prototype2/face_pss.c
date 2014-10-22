@@ -33,18 +33,24 @@ int main(int argc, char *argv[])
    uint32_t numConnections[1];
    numConnections[0] = 32;
    PasrseConfigFile( argv[1], config, numConnections);
-   printf("First name: %s\n", config[0].name);
 
    // Open channels from config and store handles
    FACE_INTERFACE_HANDLE_TYPE handles[32];
    int i;
    for(i = 0; i < 32; i++)
    {
-      FACE_IO_Open(config[i].name, &handles[i], &retCode);
-      if(retCode != FACE_NO_ERROR)
+      if(config[i].channel != 0)
       {
-         printf("Error occurred while opening %s: %d\n", config[i].name,
-            retCode);
+         FACE_IO_Open(config[i].name, &handles[i], &retCode);
+         if(retCode != FACE_NO_ERROR)
+         {
+            printf("Error occurred while opening %s: %d\n", config[i].name,
+               retCode);
+         }
+         else
+         {
+            printf("Successfully opened %s\n", config[i].name);
+         }
       }
    }
 
@@ -107,11 +113,18 @@ int main(int argc, char *argv[])
    // Close channels
    for(i = 0; i < 32; i++)
    {
-      FACE_IO_Close(handles[i], &retCode);
-      if(retCode != FACE_NO_ERROR)
+      if(config[i].channel != 0)
       {
-         printf("Error occurred while closing %s: %d\n", config[i].name,
-            retCode);
+         FACE_IO_Close(handles[i], &retCode);
+         if(retCode != FACE_NO_ERROR)
+         {
+            printf("Error occurred while closing %s: %d\n", config[i].name,
+               retCode);
+         }
+         else
+         {
+            printf("Successfully closed %s\n", config[i].name);
+         }
       }
    }
 
@@ -124,7 +137,7 @@ int main(int argc, char *argv[])
 void setDiscrete(FACE_INTERFACE_HANDLE_TYPE handle, int channel,
    uint8_t value, FACE_RETURN_CODE_TYPE *retCode)
 {
-   // The messages and stuff we will need
+   // The message and stuff we will need
    char txBuff[MAX_BUFF_SIZE];
    FACE_IO_MESSAGE_TYPE *txFaceMsg = (FACE_IO_MESSAGE_TYPE*)txBuff;
 
@@ -149,12 +162,16 @@ void setDiscrete(FACE_INTERFACE_HANDLE_TYPE handle, int channel,
 uint8_t readDiscrete(FACE_INTERFACE_HANDLE_TYPE handle, int channel,
    FACE_RETURN_CODE_TYPE *retCode)
 {
+   // The message and stuff we will need
    char rxBuff[MAX_BUFF_SIZE];
    FACE_MESSAGE_LENGTH_TYPE msgLen;
    FACE_IO_MESSAGE_TYPE *rxFaceMsg = (FACE_IO_MESSAGE_TYPE*)rxBuff;
 
+   // Zero it out
    memset(rxBuff, 0, MAX_BUFF_SIZE);
 
+   // Set the fixed fields
+   // TODO: What should we set these GUIDs to??
    rxFaceMsg->guid = htonl(200);
    rxFaceMsg->busType = FACE_DISCRETE;
    rxFaceMsg->message_type = htons(FACE_DATA);
