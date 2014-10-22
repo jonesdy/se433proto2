@@ -14,7 +14,7 @@
 static int gethandle(FACE_CONFIG_DATA_TYPE config[], int channel)
 {
    int i;
-   for(i = 0; i < 32; i++)
+   for(i = 0; i < MAX_CONNECTIONS; i++)
    {
       if(config[i].channel == channel && config[i].busType == FACE_DISCRETE)
       {
