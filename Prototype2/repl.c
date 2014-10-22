@@ -65,7 +65,7 @@ void repl(FACE_INTERFACE_HANDLE_TYPE handles[], FACE_CONFIG_DATA_TYPE config[])
 		if(command == 's')
 		{
 			FACE_RETURN_CODE_TYPE result = 1;
-			printf("set channel %d:", channel);
+			printf("set channel %d: ", channel);
 			int handleid = gethandle(handles, config, channel);
 			if(handleid > 0 && config[handleid].direction != FACE_TRANSMIT)
 				printf("channel not transmit capable!\n");
@@ -78,7 +78,7 @@ void repl(FACE_INTERFACE_HANDLE_TYPE handles[], FACE_CONFIG_DATA_TYPE config[])
 		if(command == 'c')
 		{
 			FACE_RETURN_CODE_TYPE result = 1;
-			printf("clear channel %d:", channel);
+			printf("clear channel %d: ", channel);
 			int handleid = gethandle(handles, config, channel);
 			if(handleid > 0 && config[handleid].direction != FACE_TRANSMIT)
 				printf("channel not transmit capable!\n");

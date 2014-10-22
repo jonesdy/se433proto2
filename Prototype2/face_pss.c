@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
    int i = 0;
    for(i = 0; i < 32; i++)
    {
-      if(config[i].channel != 0)
+      if(config[i].channel != 0 && config[i].busType == FACE_DISCRETE)
       {
          FACE_IO_Open(config[i].name, &handles[i], &retCode);
          if(retCode != FACE_NO_ERROR)
@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
          }
          else
          {
-            printf("Successfully opened %s\n", config[i].name);
+            printf("Successfully opened channel %d: %s\n", config[i].channel, config[i].name);
          }
       }
    }
@@ -162,10 +162,10 @@ int main(int argc, char *argv[])
    // Close channels
    for(i = 0; i < 32; i++)
    {
-      if(config[i].channel != 0)
+      if(config[i].channel != 0 && config[i].busType == FACE_DISCRETE)
       {
          FACE_IO_Close(handles[i], &retCode);
-         if(retCode != FACE_NO_ERROR)
+         if(retCode != FACE_NO_ERROR )
          {
             printf("Error occurred while closing %s: %d\n", config[i].name,
                retCode);
