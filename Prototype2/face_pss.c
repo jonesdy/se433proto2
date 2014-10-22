@@ -10,7 +10,6 @@
 
 #define MAX_BUFF_SIZE 1024
 #define PAYLOAD_LENGTH 4
-#define MAX_CONNECTIONS 32
 
 int main(int argc, char *argv[])
 {
