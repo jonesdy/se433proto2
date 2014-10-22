@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "face_pss.h"
 
 #ifdef COLOR
 #define FAILMESSAGE "\x1b[31mFAILED\x1b[39m\n"
@@ -9,7 +10,7 @@
 #endif
 
 
-void repl()
+void repl(FACE_INTERFACE_HANDLE_TYPE handle)
 {
 	printf("h for help\n");
 	while(1)
@@ -27,6 +28,7 @@ void repl()
 		{
 			printf("s 5 -- set discrete 5\n");
 			printf("c 5 -- clear discrete 5\n");
+			//printf("z 5 -- high impedance discrete 5\n");
 			printf("r 5 -- read discrete 5\n");
 			printf("q   -- quit\n");
 			printf("h   -- help\n");
@@ -49,14 +51,14 @@ void repl()
 		{
 			int result = 1;
 			printf("set channel %d:", channel);
-			//setDiscrete(channel, 1);
+			//setDiscrete(handle, channel,  1, &result);
 			printf(result?FAILMESSAGE:GOODMESSAGE);
 		}
 		if(command == 'c')
 		{
 			int result = 1;
 			printf("clear channel %d:", channel);
-			//setDiscrete(channel, 0);
+			//setDiscrete(handle, channel,  0, &result);
 			printf(result?FAILMESSAGE:GOODMESSAGE);
 		}
 		if(command == 'r')
@@ -64,7 +66,7 @@ void repl()
 			int result = 1;
 			int value = -1;
 			printf("read channel %d:", channel);
-			//value = readDiscrete(channel)
+			//value = readDiscrete(handle, channel, &result)
 			printf(result?FAILMESSAGE:GOODMESSAGE);
 			printf("value of channel %d:%d\n", channel, value); 
 		}
@@ -74,5 +76,5 @@ void repl()
 }
 
 #ifdef TESTREPL
-int main(){repl();}
+int main(){repl(NULL);}
 #endif
