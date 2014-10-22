@@ -22,12 +22,12 @@ int main(int argc, char *argv[])
 
    FACE_RETURN_CODE_TYPE retCode;
 
-   // Call init
-
    // We are on the PSS side, so we add 0 to the
    // beginning of the config file name
    FACE_CONGIGURATION_FILE_NAME configName = "0";
    strcat(configName, argv[1]);
+
+   // Call init
    FACE_IO_Initialize(configName, &retCode);
    if(retCode != FACE_NO_ERROR)
    {
@@ -108,6 +108,10 @@ int main(int argc, char *argv[])
    else if(channel >= 17 && channel <= 32)
    {
       // TX, must want to set
+   }
+   else
+   {
+      printf("Channel %d is not a valid channel\n", channel);
    }
 
    // Do actual read or write (see below functions)
