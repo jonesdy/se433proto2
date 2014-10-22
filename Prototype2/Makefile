@@ -5,7 +5,7 @@ LIBRARY=face_io_lib
 EXECUTABLE=face_pss.out
 all:lib exe
 
-exe:face_pss.o
+exe:face_pss.o repl.o
 	LD_PATH=. $(CC) -o $(EXECUTABLE) $^ -Wl,-rpath,. lib$(LIBRARY).so
 
 lib:face_io_api.o config_parser.o
@@ -13,9 +13,11 @@ lib:face_io_api.o config_parser.o
 
 %.o:%.c
 	$(CC) $(CFLAGS) $<
+repl.o:repl.c
+	$(CC) $(CFLAGS) repl.c -DCOLOR
 
 clean:
-	rm -rf *o $(LIBRARY) $(EXECUTABLE) testrepl
+	rm -rf *o $(LIBRARY) $(EXECUTABLE) testrepl *.o
 
 repltest: repl.c
 	$(CC) -DCOLOR -DTESTREPL repl.c -o repltest

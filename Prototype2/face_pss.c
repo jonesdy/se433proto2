@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <arpa/inet.h>
+void repl(FACE_INTERFACE_HANDLE_TYPE handles[], FACE_CONFIG_DATA_TYPE config[]);
 
 void setDiscreteConvenient(int channel, uint8_t value, FACE_CONFIG_DATA_TYPE *config, FACE_INTERFACE_HANDLE_TYPE *handle_arr,
 			   FACE_RETURN_CODE_TYPE* retCode);
@@ -155,6 +156,7 @@ int main(int argc, char *argv[])
          printf("Channel %d: %u", channel, discreteValue);
       }
    }
+   repl(handles, config);
 
    // Close channels
    for(i = 0; i < 32; i++)

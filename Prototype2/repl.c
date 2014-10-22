@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include "face_pss.h"
+#include "face_pss.h"
+#include "config_parser.h"
 
 #ifdef COLOR
 #define FAILMESSAGE "\x1b[31mFAILED\x1b[39m\n"
@@ -9,8 +11,21 @@
 #define GOODMESSAGE "SUCCESS\n"
 #endif
 
+static int gethandle(FACE_INTERFACE_HANDLE_TYPE handles[], FACE_CONFIG_DATA_TYPE config[], int channel)
+{
+   int i;
+   for(i = 0; i < 32; i++)
+   {
+      if(config[i].channel == channel && config[i].busType == FACE_DISCRETE)
+      {
+         return i;//handles[i];
+      }
+   }
+   printf("invalid channel!\n");
+   return -1;
+}
 
-void repl(FACE_INTERFACE_HANDLE_TYPE handle)
+void repl(FACE_INTERFACE_HANDLE_TYPE handles[], FACE_CONFIG_DATA_TYPE config[])
 {
 	printf("h for help\n");
 	while(1)
@@ -49,26 +64,44 @@ void repl(FACE_INTERFACE_HANDLE_TYPE handle)
 		//test if channel is available here?
 		if(command == 's')
 		{
-			int result = 1;
+			FACE_RETURN_CODE_TYPE result = 1;
 			printf("set channel %d:", channel);
-			//setDiscrete(handle, channel,  1, &result);
-			printf(result?FAILMESSAGE:GOODMESSAGE);
+			int handleid = gethandle(handles, config, channel);
+			if(handleid > 0 && config[handleid].direction != FACE_TRANSMIT)
+				printf("channel not transmit capable!\n");
+			else
+			{
+				setDiscrete(handles[handleid], channel,  1, &result);
+				printf(result?FAILMESSAGE:GOODMESSAGE);
+			}
 		}
 		if(command == 'c')
 		{
-			int result = 1;
+			FACE_RETURN_CODE_TYPE result = 1;
 			printf("clear channel %d:", channel);
-			//setDiscrete(handle, channel,  0, &result);
-			printf(result?FAILMESSAGE:GOODMESSAGE);
+			int handleid = gethandle(handles, config, channel);
+			if(handleid > 0 && config[handleid].direction != FACE_TRANSMIT)
+				printf("channel not transmit capable!\n");
+			else
+			{
+				setDiscrete(handles[handleid], channel,  0, &result);
+				printf(result?FAILMESSAGE:GOODMESSAGE);
+			}
 		}
 		if(command == 'r')
 		{
-			int result = 1;
+			FACE_RETURN_CODE_TYPE result = 1;
 			int value = -1;
 			printf("read channel %d:", channel);
-			//value = readDiscrete(handle, channel, &result)
-			printf(result?FAILMESSAGE:GOODMESSAGE);
-			printf("value of channel %d:%d\n", channel, value); 
+			int handleid = gethandle(handles, config, channel);
+			if(handleid > 0 && config[handleid].direction != FACE_RECEIVE)
+				printf("channel not receive capable!\n");
+			else
+			{
+				value = readDiscrete(handles[handleid], channel, &result);
+				printf(result?FAILMESSAGE:GOODMESSAGE);
+				printf("value of channel %d:%d\n", channel, value); 
+			}
 		}
 		scanf("%c", &command);//discard the character so we don't get >> (I don't like this)
 	}
