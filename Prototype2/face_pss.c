@@ -42,7 +42,6 @@ int main(int argc, char *argv[])
    FACE_CONFIG_DATA_TYPE config[*numConnections];
 
    PasrseConfigFile( argv[1], config, numConnections);
-   FACE_INTERFACE_HANDLE_TYPE handle_arr[*numConnections];
 
    /* // print out what got read from the config
    int i = 0;
@@ -79,6 +78,7 @@ int main(int argc, char *argv[])
       }
    }
 
+   // FACE_INTERFACE_HANDLE_TYPE handle_arr[*numConnections];
    /*   for(i = 0; i < *numConnections; i++) {
      FACE_IO_Open(config[i].name, &handle_arr[i], &retCode);
      }*/
