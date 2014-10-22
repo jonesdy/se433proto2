@@ -8,6 +8,10 @@
 #include <string.h>
 #include <arpa/inet.h>
 
+#define MAX_BUFF_SIZE 1024
+#define PAYLOAD_LENGTH 4
+#define MAX_CONNECTIONS 32
+
 int main(int argc, char *argv[])
 {
    if(argc < 2)
@@ -32,16 +36,15 @@ int main(int argc, char *argv[])
    }
 
    // Parse the config file
-   uint32_t numConnections[1];
-   *numConnections = (argc > 2) ? (uint32_t)*argv[2]-'0' : 32;
-   FACE_CONFIG_DATA_TYPE config[*numConnections];
+   uint32_t numConnections = MAX_CONNECTIONS;
+   FACE_CONFIG_DATA_TYPE config[MAX_CONNECTIONS];
 
-   PasrseConfigFile( argv[1], config, numConnections);
+   PasrseConfigFile( argv[1], config, &numConnections);
 
    // Open channels from config and store handles
-   FACE_INTERFACE_HANDLE_TYPE handles[32];
+   FACE_INTERFACE_HANDLE_TYPE handles[MAX_CONNECTIONS];
    int i = 0;
-   for(i = 0; i < 32; i++)
+   for(i = 0; i < MAX_CONNECTIONS; i++)
    {
       if(config[i].channel != 0 && config[i].busType == FACE_DISCRETE)
       {
@@ -61,7 +64,7 @@ int main(int argc, char *argv[])
    repl(handles, config);
 
    // Close channels
-   for(i = 0; i < 32; i++)
+   for(i = 0; i < MAX_CONNECTIONS; i++)
    {
       if(config[i].channel != 0 && config[i].busType == FACE_DISCRETE)
       {
@@ -80,9 +83,6 @@ int main(int argc, char *argv[])
 
    return 0;
 }
-
-#define MAX_BUFF_SIZE 1024
-#define PAYLOAD_LENGTH 4
 
 void setDiscrete(FACE_INTERFACE_HANDLE_TYPE handle, int channel,
    uint8_t value, FACE_RETURN_CODE_TYPE *retCode)
