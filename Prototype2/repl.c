@@ -11,7 +11,7 @@
 #define GOODMESSAGE "SUCCESS\n"
 #endif
 
-static int gethandle(FACE_INTERFACE_HANDLE_TYPE handles[], FACE_CONFIG_DATA_TYPE config[], int channel)
+static int gethandle(FACE_CONFIG_DATA_TYPE config[], int channel)
 {
    int i;
    for(i = 0; i < 32; i++)
@@ -64,42 +64,48 @@ void repl(FACE_INTERFACE_HANDLE_TYPE handles[], FACE_CONFIG_DATA_TYPE config[])
 		//test if channel is available here?
 		if(command == 's')
 		{
-			FACE_RETURN_CODE_TYPE result = 1;
+			FACE_RETURN_CODE_TYPE result;
 			printf("set channel %d: ", channel);
-			int handleid = gethandle(handles, config, channel);
+			int handleid = gethandle(config, channel);
 			if(handleid > 0 && config[handleid].direction != FACE_TRANSMIT)
-				printf("channel not transmit capable!\n");
+				printf("channel not transmit capable!%s\n", FAILMESSAGE);
+			else if(handleid < 0)
+				printf("channel does not exist!%s\n", FAILMESSAGE);
 			else
 			{
 				setDiscrete(handles[handleid], channel,  1, &result);
-				printf(result?FAILMESSAGE:GOODMESSAGE);
+				printf(result != FACE_NO_ERROR?FAILMESSAGE:GOODMESSAGE);
 			}
 		}
 		if(command == 'c')
 		{
-			FACE_RETURN_CODE_TYPE result = 1;
+			FACE_RETURN_CODE_TYPE result;
 			printf("clear channel %d: ", channel);
-			int handleid = gethandle(handles, config, channel);
+			int handleid = gethandle(config, channel);
 			if(handleid > 0 && config[handleid].direction != FACE_TRANSMIT)
-				printf("channel not transmit capable!\n");
+				printf("channel not transmit capable!%s\n", FAILMESSAGE);
+			else if(handleid < 0)
+				printf("channel does not exist!%s\n", FAILMESSAGE);
 			else
 			{
 				setDiscrete(handles[handleid], channel,  0, &result);
-				printf(result?FAILMESSAGE:GOODMESSAGE);
+				printf(result != FACE_NO_ERROR?FAILMESSAGE:GOODMESSAGE);
 			}
 		}
 		if(command == 'r')
 		{
-			FACE_RETURN_CODE_TYPE result = 1;
+			FACE_RETURN_CODE_TYPE result;
 			int value = -1;
 			printf("read channel %d:", channel);
-			int handleid = gethandle(handles, config, channel);
+			int handleid = gethandle(config, channel);
 			if(handleid > 0 && config[handleid].direction != FACE_RECEIVE)
-				printf("channel not receive capable!\n");
+				printf("channel not receive capable!%s\n", FAILMESSAGE);
+			else if(handleid < 0)
+				printf("channel does not exist!%s\n", FAILMESSAGE);
 			else
 			{
 				value = readDiscrete(handles[handleid], channel, &result);
-				printf(result?FAILMESSAGE:GOODMESSAGE);
+				printf(result != FACE_NO_ERROR?FAILMESSAGE:GOODMESSAGE);
 				printf("value of channel %d:%d\n", channel, value); 
 			}
 		}
